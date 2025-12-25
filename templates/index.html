@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MyMusic</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h1 class="logo">MyMusic</h1>
+
+    <nav class="nav">
+      <button class="nav-btn active" onclick="showHome()">Home</button>
+      <button class="nav-btn" onclick="showSearch()">Search</button>
+      <button class="nav-btn" onclick="showLibrary()">Your Library</button>
+    </nav>
+
+    <div class="playlist-section">
+      <h4>PLAYLIST</h4>
+
+      {% if playlist %}
+        {% for song in playlist %}
+          <div class="playlist-item" onclick="playSong('{{ song }}')">
+            {{ song }}
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="muted">No songs in playlist</p>
+      {% endif %}
+    </div>
+
+    <button type="button" class="theme-btn" onclick="toggleTheme()">
+      🌙 / ☀️ Theme
+    </button>
+
+    <a href="/logout" class="logout">Logout</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- SEARCH BAR -->
+    <form method="GET" class="search-bar">
+      <input
+        type="text"
+        name="search"
+        placeholder="Search songs..."
+        value="{{ search }}"
+      >
+    </form>
+
+    <h2>All Songs</h2>
+
+    {% if songs %}
+      {% for song in songs %}
+        <div class="track">
+  <div class="track-left">
+
+    <!-- ALBUM PLACEHOLDER -->
+    <img src="/static/images/album.png" class="album-cover" alt="album">
+
+
+    <button class="play-hover" onclick="playSong('{{ song }}')">▶</button>
+    <span class="track-name">{{ song }}</span>
+  </div>
+
+  <button class="add-btn" onclick="savePlaylist('{{ song }}')">＋</button>
+</div>
+
+
+      {% endfor %}
+    {% else %}
+      <p class="muted">No songs found</p>
+    {% endif %}
+
+  </main>
+</div>
+
+<!-- PLAYER -->
+<footer class="player">
+  <audio id="audio" controls></audio>
+</footer>
+
+<script>
+/* PLAY SONG */
+function playSong(song) {
+  const audio = document.getElementById("audio");
+  audio.src = "/music/" + song;
+  audio.play();
+
+  fetch("/add_recent", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ song })
+  });
+}
+
+/* SAVE PLAYLIST */
+function savePlaylist(song) {
+  fetch("/add_to_playlist", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ song })
+  }).then(() => location.reload());
+}
+
+/* NAV BUTTONS */
+function showHome() {
+  document.querySelector("h2").innerText = "All Songs";
+}
+
+function showSearch() {
+  document.querySelector("h2").innerText = "Search Songs";
+}
+
+function showLibrary() {
+  document.querySelector("h2").innerText = "Your Library";
+}
+
+/* THEME TOGGLE (SIMPLE & WORKING) */
+function toggleTheme() {
+  document.body.classList.toggle("light");
+}
+</script>
+
+</body>
+</html>

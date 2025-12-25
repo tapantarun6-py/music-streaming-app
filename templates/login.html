@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | MyMusic</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="auth-container">
+  <div class="auth-card">
+
+  <h2>Sign in</h2>
+
+  {% if error %}
+    <div class="auth-error">
+      {{ error }}
+    </div>
+  {% endif %}
+
+  <form method="POST">
+    <label>Username</label>
+    <input type="text" name="username" required>
+
+    <label>Password</label>
+    <input type="password" name="password" required>
+
+    <button type="submit">Login</button>
+  </form>
+
+</div>
+
+</div>
+
+</body>
+</html>
